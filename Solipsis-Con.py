@@ -47,7 +47,7 @@ STRATEGY NOTES:
       option. Once you settle on a baseline set of options, do some final optimizations with protections on.
     - Keep in mind the sell signal (dynamic bailout) does not function in backtest and this strategy should be
       validated and tested in dry-run before live. If you do not want to use the sell and only rely on the bits
-      of the strategy that can be backtested be sure to turn use_sell_signal = False.
+      of the strategy that can be backtested be sure to turn use_exit_signal = False.
         - If running backtest/hyperopt around the portion of the sell signal that is testable, keep in mind in live/dry
           it will not sell nearly as frequently due to the profit guard and other_profit / free_slot guards.
     - Keep in mind that due to the dynamic ROI trend ride this strategy implements that most sells for ROI will
@@ -60,7 +60,7 @@ STRATEGY NOTES:
       so hyperopting the stoploss is only changing the initial position relative to the other settings.
     - It is *not* recommended to use freqtrades built-in trailing stop, nor to hyperopt for that.
         - The custom stoploss has settings to emulate the same functionality however.
-    - It is *highly* recommended to backtest with use_sell_signal = False because it will not behave remotely the same in dry/live
+    - It is *highly* recommended to backtest with use_exit_signal = False because it will not behave remotely the same in dry/live
     - It is *highly* recommended to hyperopt this with '--spaces buy' only or 'buy sell' and at least 1000 total epochs several times.
         
     - Example of unique buy/sell params per pair/group of pairs:
@@ -139,9 +139,9 @@ class SolipsisCon(IStrategy):
     }
 
     # Recommended
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = True
 
     # Required
     startup_candle_count: int = 72
@@ -297,12 +297,12 @@ class SolipsisCon(IStrategy):
     """
     Buy Signal
     """ 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.get_pair_params(metadata['pair'], 'buy')
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
 
-        # If active trade, look at trend to persist a buy signal for ignore_roi_if_buy_signal
+        # If active trade, look at trend to persist a buy signal for ignore_roi_if_entry_signal
         if trade_data['active_trade']:
             profit_factor = (1 - (dataframe['rmi-slow'].iloc[-1] / 400))
             rmi_grow = cta.linear_growth(30, 70, 180, 720, trade_data['open_minutes'])
@@ -356,7 +356,7 @@ class SolipsisCon(IStrategy):
     """
     Sell Signal
     """
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.get_pair_params(metadata['pair'], 'sell')
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []

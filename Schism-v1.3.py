@@ -61,9 +61,9 @@ class Schism3(IStrategy):
 
     stoploss = -0.30
 
-    use_sell_signal = False
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = False
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = True
 
     startup_candle_count: int = 72
 
@@ -145,7 +145,7 @@ class Schism3(IStrategy):
     """
     Buy Trigger Signals
     """
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.get_pair_params(metadata['pair'], 'buy')
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
@@ -170,7 +170,7 @@ class Schism3(IStrategy):
         # Count how many times our pre-bounce happned in the last "lookback" candles
         dataframe['bounce-range'] = np.where(dataframe['bounce-pending'].rolling(params['bounce-lookback'], min_periods=1).sum() >= 1,1,0) 
 
-        # Persist a buy signal for existing trades to make use of ignore_roi_if_buy_signal = True
+        # Persist a buy signal for existing trades to make use of ignore_roi_if_entry_signal = True
         # when this buy signal is not present a sell can happen according to the defined ROI table
         if trade_data['active_trade']:
             # peak_profit factor f(x)=1-x/400, rmi 30 -> 0.925, rmi 80 -> 0.80
@@ -216,7 +216,7 @@ class Schism3(IStrategy):
         In this strategy all sells for profit happen according to ROI
         This sell signal is designed only as a "dynamic stoploss"
     """
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.get_pair_params(metadata['pair'], 'sell')
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
@@ -440,7 +440,7 @@ class Schism3_BTC(Schism3):
         "4320": 0
     }
 
-    use_sell_signal = False
+    use_exit_signal = False
 
 # Sub-strategy with parameters specific to ETH stake
 class Schism3_ETH(Schism3):
@@ -465,4 +465,4 @@ class Schism3_ETH(Schism3):
         "4320": 0
     }
 
-    use_sell_signal = False
+    use_exit_signal = False

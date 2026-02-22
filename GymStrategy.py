@@ -237,13 +237,13 @@ class GymStrategy(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         action, nan_list = self.rl_model_redict(dataframe)
         dataframe.loc[action == 1, 'buy'] = 1
         dataframe.loc[nan_list == True, 'buy'] = 0
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         action, nan_list = self.rl_model_redict(dataframe)
         dataframe.loc[action == 2, 'sell'] = 1
         dataframe.loc[nan_list == True, 'sell'] = 0

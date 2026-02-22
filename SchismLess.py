@@ -35,9 +35,9 @@ class Schism(IStrategy):
 
     stoploss = -0.20
 
-    use_sell_signal = False
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = False
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = True
 
     startup_candle_count: int = 72
 
@@ -72,7 +72,7 @@ class Schism(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.buy_params
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
@@ -103,7 +103,7 @@ class Schism(IStrategy):
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.sell_params
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []

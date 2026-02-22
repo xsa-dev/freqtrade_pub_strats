@@ -55,17 +55,17 @@ class LongShortRangeTradingMachetesV1(IStrategy):
     candels_per_timeframe_medium = 4
     candels_per_timeframe_long = 16
     process_only_new_candles = False
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = False
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = False
     startup_candle_count: int = 500
 
     use_dynamic_roi = True
     use_custom_stoploss = True
 
     order_types = {
-        'buy': 'limit',
-        'sell': 'limit',
+        'entry': 'limit',
+        'exit': 'limit',
         'stoploss': 'market',
         'stoploss_on_exchange': False
     }
@@ -156,7 +156,7 @@ class LongShortRangeTradingMachetesV1(IStrategy):
         return dataframe
 
 
-    def on_populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def on_populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
         if "UP" in metadata['pair'] or "DOWN" in metadata['pair']:
             if "UP" in metadata['pair']:
@@ -173,7 +173,7 @@ class LongShortRangeTradingMachetesV1(IStrategy):
         return dataframe
 
 
-    def on_populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def on_populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
         if "UP" in metadata['pair'] or "DOWN" in metadata['pair']:
             if "UP" in metadata['pair']:
@@ -216,9 +216,9 @@ class LongShortRangeTradingMachetesV1(IStrategy):
         return dataframe
 
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
-        dataframe = self.on_populate_buy_trend(dataframe, metadata)
+        dataframe = self.on_populate_entry_trend(dataframe, metadata)
 
         dataframe.loc[
             (
@@ -229,9 +229,9 @@ class LongShortRangeTradingMachetesV1(IStrategy):
         return dataframe
 
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
-        dataframe = self.on_populate_sell_trend(dataframe, metadata)
+        dataframe = self.on_populate_exit_trend(dataframe, metadata)
 
         dataframe.loc[
             (
@@ -242,7 +242,7 @@ class LongShortRangeTradingMachetesV1(IStrategy):
         return dataframe
 
 
-    def custom_sell(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float, current_profit: float, **kwargs):
+    def custom_exit(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float, current_profit: float, **kwargs):
 
         dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
         last_candle = dataframe.iloc[-1].squeeze()

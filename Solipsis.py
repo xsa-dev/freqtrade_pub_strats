@@ -43,9 +43,9 @@ class Solipsis_USD(Solipsis):
 
     stoploss = -0.10
 
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = False
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = False
 
     startup_candle_count: int = 233
     process_only_new_candles = False
@@ -76,9 +76,9 @@ class Solipsis_BTC(Solipsis):
 
     stoploss = -0.10
 
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = False
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = False
 
     startup_candle_count: int = 233
     process_only_new_candles = False
@@ -109,9 +109,9 @@ class Solipsis_ETH(Solipsis):
 
     stoploss = -0.10
 
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = False
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = False
 
     startup_candle_count: int = 233
     process_only_new_candles = False

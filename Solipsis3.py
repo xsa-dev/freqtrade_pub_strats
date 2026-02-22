@@ -170,9 +170,9 @@ class Solipsis3(IStrategy):
     stoploss = custom_stop['decay-start']
 
     # Recommended
-    use_sell_signal = False
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = False
+    use_exit_signal = False
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = False
 
     # Required
     startup_candle_count: int = 72
@@ -292,7 +292,7 @@ class Solipsis3(IStrategy):
     """
     Buy Signal
     """
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.get_pair_params(metadata['pair'], 'buy')
         conditions = []
 
@@ -346,7 +346,7 @@ class Solipsis3(IStrategy):
     """
     Sell Signal
     """
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         # params = self.get_pair_params(metadata['pair'], 'sell')
 
         dataframe['sell'] = 0

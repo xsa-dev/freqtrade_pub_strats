@@ -29,7 +29,7 @@ class PRICEFOLLOWINGX(IStrategy):
 
     You must keep:
     - the lib in the section "Do not remove these libs"
-    - the methods: populate_indicators, populate_buy_trend, populate_sell_trend
+    - the methods: populate_indicators, populate_entry_trend, populate_exit_trend
     You should keep:
     - timeframe, minimal_roi, stoploss, trailing_*
     """
@@ -83,14 +83,14 @@ class PRICEFOLLOWINGX(IStrategy):
 
     # Hyperoptable parameters
     rsi_enabled = BooleanParameter(default=True, space='buy', optimize=True, load=True)
-    #buy_rsi = DecimalParameter(0, 50, decimals = 2, default = 40, space="buy", optimize=True, load=True)
-    ema_pct = DecimalParameter(0.001, 0.100, decimals = 3, default = 0.040, space="buy", optimize=True, load=True)
-    buy_frsi = DecimalParameter(-0.71, 0.50, decimals = 2, default = -0.40, space="buy", optimize=True, load=True)
-    frsi_pct = DecimalParameter(0.01, 0.20, decimals = 2, default = 0.10, space="buy", optimize=True, load=True)
+    #buy_rsi = DecimalParameter(0, 50, decimals = 2, default = 40, space="entry", optimize=True, load=True)
+    ema_pct = DecimalParameter(0.001, 0.100, decimals = 3, default = 0.040, space="entry", optimize=True, load=True)
+    buy_frsi = DecimalParameter(-0.71, 0.50, decimals = 2, default = -0.40, space="entry", optimize=True, load=True)
+    frsi_pct = DecimalParameter(0.01, 0.20, decimals = 2, default = 0.10, space="entry", optimize=True, load=True)
     #sellspace
-    ema_sell_pct = DecimalParameter(0.001, 0.020, decimals = 3, default = 0.003, space="sell", optimize=True, load=True)
+    ema_sell_pct = DecimalParameter(0.001, 0.020, decimals = 3, default = 0.003, space="exit", optimize=True, load=True)
     sell_rsi_enabled = BooleanParameter(default=True, space='sell', optimize=True, load=True)
-    sell_frsi = DecimalParameter(-0.30, 0.70, decimals=2, default=0.2, space="sell", load=True)
+    sell_frsi = DecimalParameter(-0.30, 0.70, decimals=2, default=0.2, space="exit", load=True)
 
 
     # Optimal timeframe for the strategy.
@@ -100,16 +100,16 @@ class PRICEFOLLOWINGX(IStrategy):
     process_only_new_candles = False
 
     # These values can be overridden in the "ask_strategy" section in the config.
-    use_sell_signal = True
-    sell_profit_only = True
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = True
+    exit_profit_only = True
+    ignore_roi_if_entry_signal = True
     # Number of candles the strategy requires before producing valid signals
     startup_candle_count: int = 20
 
     # Optional order type mapping.
     order_types = {
-        'buy': 'limit',
-        'sell': 'limit',
+        'entry': 'limit',
+        'exit': 'limit',
         'stoploss': 'limit',
         'stoploss_on_exchange': False
     }
@@ -237,7 +237,7 @@ class PRICEFOLLOWINGX(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
         #rsi_enabled = BooleanParameter(default=True, space='buy', optimize=True)
 
@@ -278,7 +278,7 @@ class PRICEFOLLOWINGX(IStrategy):
         
         #return dataframe
     
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
             haopen = dataframe['ha_open']
             haclose = dataframe['ha_close']

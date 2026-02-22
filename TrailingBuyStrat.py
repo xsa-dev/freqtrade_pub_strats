@@ -44,7 +44,7 @@ class TrailingBuyStrat(YourStrat):
         'buy_tag': None
     }
 
-    def custom_sell(self, pair: str, trade: Trade, current_time: datetime, current_rate: float,
+    def custom_exit(self, pair: str, trade: Trade, current_time: datetime, current_rate: float,
                     current_profit: float, **kwargs):
         tag = super().custom_sell(pair, trade, current_time, current_rate, current_profit, **kwargs)
         if tag:
@@ -66,14 +66,14 @@ class TrailingBuyStrat(YourStrat):
         self.custom_info[pair]['trailing_buy'] = self.init_trailing_dict
         return val
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         def get_local_min(x):
             win = dataframe.loc[:, 'barssince_last_buy'].iloc[x.shape[0] - 1].astype('int')
             win = max(win, 0)
             return pd.Series(x).rolling(window=win).min().iloc[-1]
 
-        dataframe = super().populate_buy_trend(dataframe, metadata)
-        dataframe = dataframe.rename(columns={"buy": "pre_buy"})
+        dataframe = super().populate_entry_trend(dataframe, metadata)
+        dataframe = dataframe.rename(columns={"entry": "pre_buy"})
 
         if self.trailing_buy_order_enabled and self.config['runmode'].value in ('live', 'dry_run'):  # trailing live dry ticker, 1m
             last_candle = dataframe.iloc[-1].squeeze()

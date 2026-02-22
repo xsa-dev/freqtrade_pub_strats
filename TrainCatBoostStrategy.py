@@ -45,7 +45,7 @@ class TrainCatBoostStrategy(IStrategy):
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         strategies = STRATEGIES
         populated_dataframe = dataframe
         populated_dataframe["pair"] = metadata.get("pair")
@@ -59,7 +59,7 @@ class TrainCatBoostStrategy(IStrategy):
             strategy_indicators = strategy.advise_indicators(dataframe, metadata)
             dataframe[f"strat_buy_signal_{strategy_name}"] = strategy.advise_buy(
                 strategy_indicators, metadata
-            )["buy"]
+            )["entry"]
             y = dataframe[f"strat_buy_signal_{strategy_name}"]
             x = populated_dataframe[[col for col in populated_dataframe.columns if "date" not in col]].fillna(-1)
             # remove duplicated columns
@@ -87,11 +87,11 @@ class TrainCatBoostStrategy(IStrategy):
         preds = final_model.predict(dataset, prediction_type="Probability")
         dataframe["buy_proba"] = preds[:, 1]
 
-        dataframe["buy"] = dataframe['buy_proba'].apply(lambda x: 1 if x > 0.7 else 0)
+        dataframe["entry"] = dataframe['buy_proba'].apply(lambda x: 1 if x > 0.7 else 0)
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         strategies = STRATEGIES
         populated_dataframe = dataframe
         populated_dataframe["pair"] = metadata.get("pair")
@@ -105,7 +105,7 @@ class TrainCatBoostStrategy(IStrategy):
             strategy_indicators = strategy.advise_indicators(dataframe, metadata)
             dataframe[f"strat_sell_signal_{strategy_name}"] = strategy.advise_sell(
                 strategy_indicators, metadata
-            )["sell"]
+            )["exit"]
 
             y = dataframe[f"strat_sell_signal_{strategy_name}"]
             x = populated_dataframe[[col for col in populated_dataframe.columns if "date" not in col]].fillna(-1)
@@ -134,6 +134,6 @@ class TrainCatBoostStrategy(IStrategy):
         preds = final_model.predict(dataset, prediction_type="Probability")
         dataframe["sell_proba"] = preds[:, 1]
 
-        dataframe["sell"] = dataframe['sell_proba'].apply(lambda x: 1 if x > 0.7 else 0)
+        dataframe["exit"] = dataframe['sell_proba'].apply(lambda x: 1 if x > 0.7 else 0)
 
         return dataframe

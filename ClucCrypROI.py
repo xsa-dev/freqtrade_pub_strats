@@ -86,7 +86,7 @@ class ClucCrypROI(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.buy_params
         active_trade = False
 
@@ -97,7 +97,7 @@ class ClucCrypROI(IStrategy):
 
         """
         If this is a fresh buy, apple additional conditions.
-        Idea is to leverage "ignore_roi_if_buy_signal = True" functionality by using certain
+        Idea is to leverage "ignore_roi_if_entry_signal = True" functionality by using certain
         indicators for active trades while applying additional protections to new trades.
         """
         if not active_trade:
@@ -144,7 +144,7 @@ class ClucCrypROI(IStrategy):
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.sell_params
 
         conditions = []
@@ -202,9 +202,9 @@ class ClucCrypROI_ETH(ClucCrypROI):
 
     timeframe = '15m'
 
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = True
 
     # Buy hyperspace params:
     buy_params = {
@@ -249,9 +249,9 @@ class ClucCrypROI_BTC(ClucCrypROI):
 
     timeframe = '15m'
 
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = True
 
     # Buy hyperspace params:
     buy_params = {

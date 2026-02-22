@@ -77,7 +77,7 @@ class BinClucHyperOpt(IHyperOpt):
         """
         Define the buy strategy parameters to be used by Hyperopt.
         """
-        def populate_buy_trend(dataframe: DataFrame, metadata: dict) -> DataFrame:
+        def populate_entry_trend(dataframe: DataFrame, metadata: dict) -> DataFrame:
             """
             Buy strategy Hyperopt will build and use.
             """
@@ -105,7 +105,7 @@ class BinClucHyperOpt(IHyperOpt):
 
             return dataframe
 
-        return populate_buy_trend
+        return populate_entry_trend
 
     @staticmethod
     def indicator_space() -> List[Dimension]:
@@ -129,7 +129,7 @@ class BinClucHyperOpt(IHyperOpt):
         """
         Define the sell strategy parameters to be used by Hyperopt.
         """
-        def populate_sell_trend(dataframe: DataFrame, metadata: dict) -> DataFrame:
+        def populate_exit_trend(dataframe: DataFrame, metadata: dict) -> DataFrame:
             """
             no sell signal
             """
@@ -139,7 +139,7 @@ class BinClucHyperOpt(IHyperOpt):
             ] = 1
             return dataframe
 
-        return populate_sell_trend
+        return populate_exit_trend
 
     @staticmethod
     def sell_indicator_space() -> List[Dimension]:

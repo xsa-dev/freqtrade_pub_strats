@@ -49,7 +49,7 @@ STOPLOSS - NONE
 
 GENERAL SETTINGS
 Temporarily setting this to stem some recent losses:
-use_sell_signal = False
+use_exit_signal = False
 
 """
 
@@ -85,9 +85,9 @@ class Schism(IStrategy):
     stoploss = -0.30
 
     # Recommended
-    use_sell_signal = False
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = False
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = True
 
     startup_candle_count: int = 72
 
@@ -173,12 +173,12 @@ class Schism(IStrategy):
     """
     Buy Trigger Signals
     """
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.get_pair_params(metadata['pair'], 'buy')
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
 
-        # Persist a buy signal for existing trades to make use of ignore_roi_if_buy_signal = True
+        # Persist a buy signal for existing trades to make use of ignore_roi_if_entry_signal = True
         # when this buy signal is not present a sell can happen according to the defined ROI table
         if trade_data['active_trade']:
             # peak_profit factor f(x)=1-x/400, rmi 30 -> 0.925, rmi 80 -> 0.80
@@ -226,7 +226,7 @@ class Schism(IStrategy):
     """
     Sell Trigger Signals
     """
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.get_pair_params(metadata['pair'], 'sell')
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
@@ -453,7 +453,7 @@ class Schism_BTC(Schism):
         'xtf-stake-rsi': 53
     }
 
-    use_sell_signal = False
+    use_exit_signal = False
 
 # Sub-strategy with parameters specific to ETH stake
 class Schism_ETH(Schism):
@@ -481,4 +481,4 @@ class Schism_ETH(Schism):
         'xtf-stake-rsi': 67
     }
 
-    use_sell_signal = False
+    use_exit_signal = False

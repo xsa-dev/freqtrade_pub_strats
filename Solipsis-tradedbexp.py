@@ -27,7 +27,7 @@ import custom_indicators as cta
 
 """
 FEATURES:
-    - ROI override, extending use of ignore_roi_if_buy_signal = True by stimulating a sticking buy signal for active trades
+    - ROI override, extending use of ignore_roi_if_entry_signal = True by stimulating a sticking buy signal for active trades
       which are in an upward trend.  This ensures we extract maximum profit from trades rather than relying on static ROI points.
     - Custom Stoploss with several modes and options (review the code).
     - Dynamic ROI table with several modes and options (review the code).
@@ -50,7 +50,7 @@ STRATEGY NOTES:
       option. Once you settle on a baseline set of options, do some final optimizations with protections on.
     - Keep in mind the sell signal (dynamic bailout) does not function in backtest and this strategy should be
       validated and tested in dry-run before live. If you do not want to use the sell and only rely on the bits
-      of the strategy that can be backtested be sure to turn use_sell_signal = False.
+      of the strategy that can be backtested be sure to turn use_exit_signal = False.
         - If running backtest/hyperopt around the portion of the sell signal that is testable, keep in mind in live/dry
           it will not sell nearly as frequently due to the profit guard and other_profit / free_slot guards.
     - Keep in mind that due to the dynamic ROI trend ride this strategy implements that most sells for ROI will
@@ -65,7 +65,7 @@ STRATEGY NOTES:
         - The custom stoploss has settings to emulate the same functionality, however.
         - Might be worthwhile to disable the trailing stop in solipsis, hyperopt the trailing, and use those settings with the 
           Solipsis implementation, *if* you want a positive trailing stop, but the ROI ride should be preferred over the positive stoploss.
-    - It is *highly* recommended to backtest with use_sell_signal = False because it will not behave remotely the same in dry/live
+    - It is *highly* recommended to backtest with use_exit_signal = False because it will not behave remotely the same in dry/live
     - It is *highly* recommended to hyperopt this with '--spaces buy' only or 'buy sell' and at least 1000 total epochs several times. There are
       a lot of variables being hyperopted and it may take a lot of epochs to find the right settings.
         
@@ -156,9 +156,9 @@ class Solipsis(IStrategy):
     }
 
     # Recommended
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = True
 
     # Required
     startup_candle_count: int = 72
@@ -267,12 +267,12 @@ class Solipsis(IStrategy):
     """
     Buy Signal
     """ 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.get_pair_params(metadata['pair'], 'buy')
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
 
-        # If active trade, look at trend to persist a buy signal for ignore_roi_if_buy_signal
+        # If active trade, look at trend to persist a buy signal for ignore_roi_if_entry_signal
         if trade_data['active_trade']:
             profit_factor = (1 - (dataframe['rmi-slow'].iloc[-1] / 400))
             rmi_grow = cta.linear_growth(30, 70, 180, 720, trade_data['open_minutes'])
@@ -335,7 +335,7 @@ class Solipsis(IStrategy):
     """
     Sell Signal
     """
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.get_pair_params(metadata['pair'], 'sell')
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []

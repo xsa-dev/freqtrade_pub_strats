@@ -26,11 +26,11 @@ logger = logging.getLogger(__name__)
 
 class Gumbo1(IStrategy):
     # region Parameters
-    ewo_low = DecimalParameter(-20.0, 1, default=0, space="buy", optimize=True)
-    t3_periods = IntParameter(5, 20, default=5, space="buy", optimize=True)
+    ewo_low = DecimalParameter(-20.0, 1, default=0, space="entry", optimize=True)
+    t3_periods = IntParameter(5, 20, default=5, space="entry", optimize=True)
 
-    stoch_high = IntParameter(60, 100, default=80, space="sell", optimize=True)
-    stock_periods = IntParameter(70, 90, default=80, space="sell", optimize=True)
+    stoch_high = IntParameter(60, 100, default=80, space="exit", optimize=True)
+    stock_periods = IntParameter(70, 90, default=80, space="exit", optimize=True)
 
     # endregion
     # region Params
@@ -41,9 +41,9 @@ class Gumbo1(IStrategy):
     use_custom_stoploss = False
     inf_timeframe = '1h'
     # Recommended
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = True
     startup_candle_count = 200
 
     def informative_pairs(self) -> ListPairsWithTimeframes:
@@ -89,7 +89,7 @@ class Gumbo1(IStrategy):
         dataframe = self.populate_informative_indicators(dataframe, metadata)
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         conditions = []
         # ewo < 0
         conditions.append(dataframe['EWO'] < self.ewo_low.value)
@@ -101,7 +101,7 @@ class Gumbo1(IStrategy):
             dataframe.loc[reduce(lambda x, y: x & y, conditions), 'buy'] = 1
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         conditions = []
         # stoch > 80
         conditions.append(

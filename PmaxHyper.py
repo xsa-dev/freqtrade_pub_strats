@@ -108,7 +108,7 @@ class PmaxHyper(IHyperOpt):
         Define the buy strategy parameters to be used by hyperopt
         """
 
-        def populate_buy_trend(dataframe: DataFrame, metadata: dict) -> DataFrame:
+        def populate_entry_trend(dataframe: DataFrame, metadata: dict) -> DataFrame:
             EMA = "EMA" + str(params['length'])
             pmax = "pm_" + str(params['length']) + "_" + str(params['multiplier']) + "_" + str(
                 params['length']) + "_" + str(params['MAtype'])
@@ -120,7 +120,7 @@ class PmaxHyper(IHyperOpt):
 
             return dataframe
 
-        return populate_buy_trend
+        return populate_entry_trend
 
     @staticmethod
     def indicator_space() -> List[Dimension]:
@@ -140,7 +140,7 @@ class PmaxHyper(IHyperOpt):
         Define the sell strategy parameters to be used by hyperopt
         """
 
-        def populate_sell_trend(dataframe: DataFrame, metadata: dict) -> DataFrame:
+        def populate_exit_trend(dataframe: DataFrame, metadata: dict) -> DataFrame:
             EMA = "EMA" + str(params['length'])
             pmax = "pm_" + str(params['length']) + "_" + str(params['multiplier']) + "_" + str(
                 params['length']) + "_" + str(params['MAtype'])
@@ -151,7 +151,7 @@ class PmaxHyper(IHyperOpt):
                 'sell'] = 1
             return dataframe
 
-        return populate_sell_trend
+        return populate_exit_trend
 
     @staticmethod
     def sell_indicator_space() -> List[Dimension]:

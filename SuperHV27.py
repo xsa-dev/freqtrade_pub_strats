@@ -60,9 +60,9 @@ class SuperHV27(IStrategy):
     }
 
     # Probably don't change these
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = True
 
     # Custom Dicts for storing trade data and other custom things this strategy does
     custom_trade_info = {}
@@ -109,7 +109,7 @@ class SuperHV27(IStrategy):
         return dataframe
 
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.buy_params
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
@@ -170,7 +170,7 @@ class SuperHV27(IStrategy):
         return dataframe
 
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.sell_params
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
@@ -396,7 +396,7 @@ class SuperHV27_BTC(SuperHV27):
 
 
 
-    use_sell_signal = False
+    use_exit_signal = False
 
 # Sub-strategy with parameters specific to ETH stake
 class SuperHV27_ETH(SuperHV27):
@@ -405,4 +405,4 @@ class SuperHV27_ETH(SuperHV27):
 
 
 
-    use_sell_signal = False
+    use_exit_signal = False

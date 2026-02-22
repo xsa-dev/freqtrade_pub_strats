@@ -65,7 +65,7 @@ class NowoIchimoku1hV2(IStrategy):
 
     startup_candle_count = 100
 
-    use_sell_signal = False
+    use_exit_signal = False
 
     use_custom_stoploss = True
 
@@ -116,11 +116,11 @@ class NowoIchimoku1hV2(IStrategy):
         }
     }
 
-    srsi_k_min_profit = DecimalParameter(0.01, 0.99, decimals=3, default=0.036, space="sell")
-    above_upper_min_profit = DecimalParameter(0.001, 0.5, decimals=3, default=0.011, space="sell")
-    limit_factor = DecimalParameter(0.5, 5, decimals=3, default=1.918, space="sell")
-    lower_cloud_factor = DecimalParameter(0.5, 1.5, decimals=3, default=0.971, space="sell")
-    close_above_shifted_upper_cloud = DecimalParameter(0.5, 2, decimals=3, default=0.603, space="buy")
+    srsi_k_min_profit = DecimalParameter(0.01, 0.99, decimals=3, default=0.036, space="exit")
+    above_upper_min_profit = DecimalParameter(0.001, 0.5, decimals=3, default=0.011, space="exit")
+    limit_factor = DecimalParameter(0.5, 5, decimals=3, default=1.918, space="exit")
+    lower_cloud_factor = DecimalParameter(0.5, 1.5, decimals=3, default=0.971, space="exit")
+    close_above_shifted_upper_cloud = DecimalParameter(0.5, 2, decimals=3, default=0.603, space="entry")
 
     def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
@@ -194,7 +194,7 @@ class NowoIchimoku1hV2(IStrategy):
 
         return df
 
-    def populate_buy_trend(self, df: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, df: DataFrame, metadata: dict) -> DataFrame:
         df['is_cloud_green'] = df['lead_1'] > df['lead_2']
 
         double_shifted_upper_cloud = df['upper_cloud'].shift(50)
@@ -230,6 +230,6 @@ class NowoIchimoku1hV2(IStrategy):
 
         return df
 
-    def populate_sell_trend(self, df: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, df: DataFrame, metadata: dict) -> DataFrame:
         df['sell'] = 0
         return df

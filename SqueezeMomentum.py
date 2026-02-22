@@ -234,10 +234,10 @@ class SqueezeMomentum(IStrategy):
 	use_custom_stoploss = False
 
 	# Sell signal
-	use_sell_signal = True
-	sell_profit_only = False
+	use_exit_signal = True
+	exit_profit_only = False
 	sell_profit_offset = 0.01
-	ignore_roi_if_buy_signal = False
+	ignore_roi_if_entry_signal = False
 	process_only_new_candles = True
 	startup_candle_count = 30
 
@@ -379,7 +379,7 @@ class SqueezeMomentum(IStrategy):
 
 		return dataframe
 
-	def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+	def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 		bb_length = self.BB_length.value
 		mult = self.BB_multifactor.value
 		kc = self.KC_multifactor.value
@@ -421,7 +421,7 @@ class SqueezeMomentum(IStrategy):
 			'buy'] = 1
 		return dataframe
 
-	def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+	def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 		dataframe.loc[
 			(
 					(dataframe[f'val_{self.BB_length.value}'].shift(2) < dataframe[f'val_{self.BB_length.value}'].shift(1)) &

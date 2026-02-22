@@ -55,9 +55,9 @@ class EnsembleStrategy(IStrategy):
 
     stoploss = -0.99  # effectively disabled.
     sell_profit_offset = 0.001  # it doesn't meant anything, just to guarantee there is a minimal profit.
-    use_sell_signal = False
-    ignore_roi_if_buy_signal = False
-    sell_profit_only = False
+    use_exit_signal = False
+    ignore_roi_if_entry_signal = False
+    exit_profit_only = False
 
     # Trailing stoploss
     trailing_stop = False
@@ -119,22 +119,22 @@ class EnsembleStrategy(IStrategy):
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         strategies = STRAT_COMBINATIONS[self.buy_strategies.value]
         for strategy_name in strategies:
             strategy = self.get_strategy(strategy_name)
             strategy_indicators = strategy.advise_indicators(dataframe, metadata)
             dataframe[f"strat_buy_signal_{strategy_name}"] = strategy.advise_buy(
                 strategy_indicators, metadata
-            )["buy"]
+            )["entry"]
         
         dataframe['buy'] = (
             dataframe.filter(like='strat_buy_signal_').mean(axis=1) > self.buy_action_diff_threshold.value
         ).astype(int)
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe["sell"] = 0
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe["exit"] = 0
         return dataframe
 
     def custom_stoploss(

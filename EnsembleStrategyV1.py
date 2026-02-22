@@ -147,28 +147,28 @@ class EnsembleStrategyV1(IStrategy):
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         strategies = STRAT_COMBINATIONS[self.buy_strategies.value]
         for strategy_name in strategies:
             strategy = self.get_strategy(strategy_name)
             strategy_indicators = strategy.advise_indicators(dataframe, metadata)
             dataframe[f"strat_buy_signal_{strategy_name}"] = strategy.advise_buy(
                 strategy_indicators, metadata
-            )["buy"]
+            )["entry"]
 
         dataframe['buy'] = (
             dataframe.filter(like='strat_buy_signal_').mean(axis=1) > self.buy_mean_threshold.value
         ).astype(int)
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         strategies = STRAT_COMBINATIONS[self.sell_strategies.value]
         for strategy_name in strategies:
             strategy = self.get_strategy(strategy_name)
             strategy_indicators = strategy.advise_indicators(dataframe, metadata)
             dataframe[f"strat_sell_signal_{strategy_name}"] = strategy.advise_sell(
                 strategy_indicators, metadata
-            )["sell"]
+            )["exit"]
 
         dataframe['sell'] = (
             dataframe.filter(like='strat_sell_signal_').mean(axis=1) > self.sell_mean_threshold.value

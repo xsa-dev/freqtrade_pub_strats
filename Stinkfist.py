@@ -50,9 +50,9 @@ class Stinkfist(IStrategy):
     stoploss = -0.40
 
     # Probably don't change these
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = True
 
     startup_candle_count: int = 72
 
@@ -116,7 +116,7 @@ class Stinkfist(IStrategy):
     """
     Buy Trigger Signals
     """
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.buy_params
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
@@ -153,7 +153,7 @@ class Stinkfist(IStrategy):
     """
     Sell Trigger Signals
     """
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.sell_params
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
@@ -393,7 +393,7 @@ class Stinkfist_BTC(Stinkfist):
         'mp': 66,
     }
 
-    use_sell_signal = False
+    use_exit_signal = False
 
 # Sub-strategy with parameters specific to ETH stake
 class Stinkfist_ETH(Stinkfist):
@@ -411,4 +411,4 @@ class Stinkfist_ETH(Stinkfist):
     trailing_stop_positive_offset = 0.022
     trailing_only_offset_is_reached = False
 
-    use_sell_signal = False
+    use_exit_signal = False

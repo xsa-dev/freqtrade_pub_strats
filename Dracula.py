@@ -168,7 +168,7 @@ class Dracula(IStrategy):
         return dataframe
 
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         prev = dataframe.shift(1)
         prev1 = dataframe.shift(2)
         lost_protect = (dataframe['ema'] > (dataframe['close'] * 1.07)).rolling(10).sum() == 0
@@ -202,7 +202,7 @@ class Dracula(IStrategy):
 
         return dataframe
 
-    def custom_sell(self, pair: str, trade: Trade, current_time: datetime, current_rate: float,
+    def custom_exit(self, pair: str, trade: Trade, current_time: datetime, current_rate: float,
                     current_profit: float, **kwargs):
         dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
         last_candle = dataframe.iloc[-1].squeeze()
@@ -231,7 +231,7 @@ class Dracula(IStrategy):
             return 'stop_loss_sma'
         return None
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[:, 'sell'] = 0
 
         return dataframe

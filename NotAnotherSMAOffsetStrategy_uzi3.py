@@ -25,8 +25,8 @@ def zlema2(dataframe, fast):
 
 
 order_types = {
-    'buy': 'limit',
-    'sell': 'market',
+    'entry': 'limit',
+    'exit': 'market',
     'stoploss': 'market',
     'stoploss_on_exchange': False
     }    
@@ -67,10 +67,10 @@ class NotAnotherSMAOffsetStrategy_uzi3(IStrategy):
     trailing_only_offset_is_reached = True
 
     # Sell signal
-    use_sell_signal = True
-    sell_profit_only = False
+    use_exit_signal = True
+    exit_profit_only = False
     sell_profit_offset = 0.005
-    ignore_roi_if_buy_signal = False
+    ignore_roi_if_entry_signal = False
 
     # Optimal timeframe for the strategy
     timeframe = '5m'
@@ -199,7 +199,7 @@ class NotAnotherSMAOffsetStrategy_uzi3(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
         dataframe.loc[
         (
@@ -261,7 +261,7 @@ class NotAnotherSMAOffsetStrategy_uzi3(IStrategy):
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         conditions = []
 
         conditions.append(

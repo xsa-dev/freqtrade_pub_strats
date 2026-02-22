@@ -35,7 +35,7 @@ class CofiBitStrategy(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Based on TA indicators, populates the buy signal for the given dataframe
         :param dataframe: DataFrame
@@ -49,12 +49,12 @@ class CofiBitStrategy(IStrategy):
                 & (dataframe["fastd"] < 30)
                 & (dataframe["adx"] > 30)
             ),
-            "buy",
+            "entry",
         ] = 1
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Based on TA indicators, populates the sell signal for the given dataframe
         :param dataframe: DataFrame
@@ -64,7 +64,7 @@ class CofiBitStrategy(IStrategy):
             ((dataframe["open"] >= dataframe["ema_high"]))
             | (dataframe["fastk"] > 70)
             | (qtpylib.crossed_above(dataframe["fastd"], 70)),
-            "sell",
+            "exit",
         ] = 1
 
         return dataframe

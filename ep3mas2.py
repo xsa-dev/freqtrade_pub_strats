@@ -105,7 +105,7 @@ class ep3mas2(IStrategy):
         
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         #Buy if last 5 candles show a strong downtrend (linear regression angle) and close is inferior to the 25 candle linear regression line - 1 * ATR (over 25 candles)
         dataframe.loc[
             (
@@ -121,7 +121,7 @@ class ep3mas2(IStrategy):
             ),
             'buy'] = 1
         return dataframe
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         # Sell if RSI is greater than 31 and close is superior to the 25 candle linear regression line
         dataframe.loc[
             (
@@ -159,7 +159,7 @@ class ep3mas2(IStrategy):
             
         return 1
 
-    def custom_sell(self, pair: str, trade: 'Trade', current_time: datetime,
+    def custom_exit(self, pair: str, trade: 'Trade', current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
                 
         # Obtain pair dataframe.

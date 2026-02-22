@@ -61,10 +61,10 @@ class BBRSITV(IStrategy):
     trailing_only_offset_is_reached = True  # value loaded from strategy
 
     # Sell signal
-    use_sell_signal = True
-    sell_profit_only = False
+    use_exit_signal = True
+    exit_profit_only = False
     sell_profit_offset = 0.01
-    ignore_roi_if_buy_signal = False
+    ignore_roi_if_entry_signal = False
     process_only_new_candles = True
     startup_candle_count = 30
 
@@ -187,7 +187,7 @@ class BBRSITV(IStrategy):
         dataframe['EWO'] = EWO(dataframe, self.fast_ewo, self.slow_ewo)
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
             (
                 # upper = basis + dev
@@ -204,7 +204,7 @@ class BBRSITV(IStrategy):
             'buy'] = 1
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
             (
                 (
@@ -225,12 +225,12 @@ class BBRSITV4(BBRSITV):
     minimal_roi = {
         "0": 0.07
     }
-    ignore_roi_if_buy_signal = True
+    ignore_roi_if_entry_signal = True
     startup_candle_count = 400
 
     stoploss = -0.3  # value loaded from strategy
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
             (
                 (dataframe['rsi'] < (dataframe[f'basis_{self.for_ma_length.value}'] - (dataframe[f'dev_{self.for_ma_length.value}'] * self.for_sigma.value)))

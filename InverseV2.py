@@ -57,17 +57,17 @@ class InverseV2(IStrategy):
     process_only_new_candles = False
 
     # These values can be overridden in the "ask_strategy" section in the config.
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = False
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = False
 
     # Number of candles the strategy requires before producing valid signals
     startup_candle_count: int = 200
 
     # Optional order type mapping.
     order_types = {
-        'buy': 'limit',
-        'sell': 'limit',
+        'entry': 'limit',
+        'exit': 'limit',
         'stoploss': 'market',
         'stoploss_on_exchange': False
     }
@@ -92,7 +92,7 @@ class InverseV2(IStrategy):
     }
     
     # Hyperoptable parameters
-    buy_fisher_length = IntParameter(low=13, high=55, default=34, space="buy", optimize=True, load=True)
+    buy_fisher_length = IntParameter(low=13, high=55, default=34, space="entry", optimize=True, load=True)
     buy_fisher_cci_1 = DecimalParameter(low=-0.6, high=-0.3, decimals=2, default=-0.5, space='buy', optimize=True, load=True)
     buy_fisher_cci_2 = DecimalParameter(low=0.3, high=0.6, decimals=2, default=0.5, space='buy', optimize=True, load=True)
     
@@ -230,7 +230,7 @@ class InverseV2(IStrategy):
         
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         
         dataframe.loc[
             (
@@ -255,7 +255,7 @@ class InverseV2(IStrategy):
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         
         dataframe.loc[
             (

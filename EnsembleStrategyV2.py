@@ -38,9 +38,9 @@ MAX_COMBINATIONS = len(STRAT_COMBINATIONS) - 1
 class EnsembleStrategyV2(IStrategy):
     loaded_strategies = {}
 
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = False
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = False
 
     informative_timeframe = '1h'
     buy_mean_threshold = DecimalParameter(0.0, 1, default=0.032, load=True)
@@ -103,7 +103,7 @@ class EnsembleStrategyV2(IStrategy):
         # TODO: move all strats signals to here, add mean and difference mean for buy and sell
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         strategies = STRAT_COMBINATIONS[self.buy_strategies.value]
         for strategy_name in strategies:
             strategy = self.get_strategy(strategy_name)
@@ -111,7 +111,7 @@ class EnsembleStrategyV2(IStrategy):
                 strategy_indicators = strategy.advise_indicators(dataframe, metadata)
                 dataframe[f"strat_buy_signal_{strategy_name}"] = strategy.advise_buy(
                     strategy_indicators, metadata
-                )["buy"]
+                )["entry"]
             except Exception:
                 pass
 
@@ -120,11 +120,11 @@ class EnsembleStrategyV2(IStrategy):
         ).astype(int)
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe["sell"] = 0
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe["exit"] = 0
         return dataframe
 
-    def custom_sell(
+    def custom_exit(
         self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float, current_profit: float, **kwargs
     ) -> float:
         dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
@@ -138,7 +138,7 @@ class EnsembleStrategyV2(IStrategy):
                     strategy_indicators = strategy.advise_indicators(dataframe, metadata)
                     dataframe[f"strat_sell_signal_{strategy_name}"] = strategy.advise_sell(
                         strategy_indicators, metadata
-                    )["sell"]
+                    )["exit"]
                 except Exception:
                     pass
 

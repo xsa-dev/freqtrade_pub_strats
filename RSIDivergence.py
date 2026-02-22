@@ -325,7 +325,7 @@ class RSIDivTirail(IStrategy):
         dataframe['EWO'] = EWO(dataframe, self.fast_ewo, self.slow_ewo)
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         conditions = []
 
         if self.use_bull.value:
@@ -356,7 +356,7 @@ class RSIDivTirail(IStrategy):
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         conditions = []
 
         if self.use_bear.value:

@@ -21,7 +21,7 @@ class Apollo11(IStrategy):
     startup_candle_count: int = 480
     trailing_stop = False
     use_custom_stoploss = True
-    use_sell_signal = False
+    use_exit_signal = False
 
     # ROI table:
     minimal_roi = {
@@ -135,7 +135,7 @@ class Apollo11(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
         dataframe.loc[
         (  
@@ -166,9 +166,9 @@ class Apollo11(IStrategy):
         
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         # This is essentailly ignored as we're using strict ROI / Stoploss / TTP sale scenarios
-        dataframe.loc[(), "sell"] = 0
+        dataframe.loc[(), "exit"] = 0
         return dataframe
 
     def custom_stoploss(
@@ -588,8 +588,8 @@ class UziChanTB2(Apollo11):
         return val
 
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe = super().populate_buy_trend(dataframe, metadata)
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe = super().populate_entry_trend(dataframe, metadata)
 
         if self.trailing_buy_order_enabled and self.config['runmode'].value in ('live', 'dry_run'): 
             last_candle = dataframe.iloc[-1].squeeze()
@@ -612,8 +612,8 @@ class UziChanTB2(Apollo11):
         return dataframe
 
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe = super().populate_sell_trend(dataframe, metadata)
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe = super().populate_exit_trend(dataframe, metadata)
 
         if self.trailing_buy_order_enabled and self.abort_trailing_when_sell_signal_triggered and self.config['runmode'].value in ('live', 'dry_run'):
             last_candle = dataframe.iloc[-1].squeeze()

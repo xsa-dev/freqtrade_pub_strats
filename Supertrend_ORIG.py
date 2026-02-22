@@ -87,10 +87,10 @@ class Supertrend(IStrategy):
 
     timeframe = '5m'
 
-    use_sell_signal = True
-    sell_profit_only = False
+    use_exit_signal = True
+    exit_profit_only = False
     sell_profit_offset = 0.02
-    ignore_roi_if_buy_signal = True
+    ignore_roi_if_entry_signal = True
 
     process_only_new_candles = False
 
@@ -109,7 +109,7 @@ class Supertrend(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.buy_params
 
         conditions = []
@@ -129,7 +129,7 @@ class Supertrend(IStrategy):
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.sell_params
 
         conditions = []

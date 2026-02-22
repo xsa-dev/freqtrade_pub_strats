@@ -41,9 +41,9 @@ class Schism(IStrategy):
     stoploss = -0.50
 
     # Probably don't change these
-    use_sell_signal = True
-    sell_profit_only = False
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = True
 
     startup_candle_count: int = 21
 
@@ -122,12 +122,12 @@ class Schism(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.buy_params
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
 
-        # Persist a buy signal for existing trades to make use of ignore_roi_if_buy_signal = True
+        # Persist a buy signal for existing trades to make use of ignore_roi_if_entry_signal = True
         # when this buy signal is not present a sell can happen according to the defined ROI table
         if trade_data['active_trade']:
             conditions.append(trade_data['current_profit'] > (trade_data['peak_profit'] * (dataframe['rmi-slow'] / 105)))
@@ -164,7 +164,7 @@ class Schism(IStrategy):
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.sell_params
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []

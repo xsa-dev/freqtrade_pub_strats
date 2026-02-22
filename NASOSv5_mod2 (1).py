@@ -113,10 +113,10 @@ class NASOSv5_mod2(IStrategy):
 
 
     # Sell signal
-    use_sell_signal = True
-    sell_profit_only = False
+    use_exit_signal = True
+    exit_profit_only = False
     sell_profit_offset = 0.01
-    ignore_roi_if_buy_signal = False
+    ignore_roi_if_entry_signal = False
 
     # Optional order time in force.
     order_time_in_force = {
@@ -335,7 +335,7 @@ class NASOSv5_mod2(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
         dont_buy_conditions = []
 
@@ -389,7 +389,7 @@ class NASOSv5_mod2(IStrategy):
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         conditions = []
 
         conditions.append(
@@ -454,7 +454,7 @@ class NASOSv5HO(NASOSv5_mod2):
     trailing_only_offset_is_reached = True  # value loaded from strategy
 
 class NASOSv5PD(NASOSv5_mod2):
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
         dont_buy_conditions = []
 
@@ -577,7 +577,7 @@ class TrailingBuyStrat(NASOSv5_mod2):
 
     custom_info = dict() # custom_info should be a dict
 
-    def custom_sell(self, pair: str, trade: Trade, current_time: datetime, current_rate: float,
+    def custom_exit(self, pair: str, trade: Trade, current_time: datetime, current_rate: float,
                     current_profit: float, **kwargs):
         tag = super(TrailingBuyStrat, self).custom_sell(pair, trade, current_time, current_rate, current_profit, **kwargs)
         if tag:
@@ -612,14 +612,14 @@ class TrailingBuyStrat(NASOSv5_mod2):
         self.custom_info[pair]['trailing_buy']['buy_tag'] = None
         return val
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         def get_local_min(x):
             win = dataframe.loc[:, 'barssince_last_buy'].iloc[x.shape[0] - 1].astype('int')
             win = max(win, 0)
             return pd.Series(x).rolling(window=win).min().iloc[-1]
 
-        dataframe = super(TrailingBuyStrat, self).populate_buy_trend(dataframe, metadata)
-        dataframe = dataframe.rename(columns={"buy": "pre_buy"})
+        dataframe = super(TrailingBuyStrat, self).populate_entry_trend(dataframe, metadata)
+        dataframe = dataframe.rename(columns={"entry": "pre_buy"})
 
         if self.trailing_buy_order_enabled and self.config['runmode'].value in ('live', 'dry_run'):  # trailing live dry ticker, 1m
             last_candle = dataframe.iloc[-1].squeeze()

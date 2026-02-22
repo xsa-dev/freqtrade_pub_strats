@@ -21,8 +21,8 @@ class OBOnlyWSv2bband(BinanceStream):
 
 
     timeframe = '1m'
-    use_sell_signal = True
-    sell_profit_only = False
+    use_exit_signal = True
+    exit_profit_only = False
     # Run "populate_indicators()" only for new candle.
     process_only_new_candles = True
     strat_data={

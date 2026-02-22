@@ -22,8 +22,8 @@ class Ichimoku_SenkouSpanCross(IStrategy):
     trailing_stop_positive_offset = 0.50
     trailing_only_offset_is_reached = True
     order_types = {
-        'buy': 'market',
-        'sell': 'market',
+        'entry': 'market',
+        'exit': 'market',
         'stoploss': 'market',
         'stoploss_on_exchange': False
     }
@@ -45,7 +45,7 @@ class Ichimoku_SenkouSpanCross(IStrategy):
         dataframe['cloud_red'] = ichi['cloud_red']
         dataframe['rsi'] = ta.RSI(dataframe, timeperiod=14)
         return dataframe
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
             (
                 (qtpylib.crossed_above(dataframe['senkou_a'], dataframe['senkou_b'])) &
@@ -55,7 +55,7 @@ class Ichimoku_SenkouSpanCross(IStrategy):
             ),
             'buy'] = 1
         return dataframe
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
             (
                 (qtpylib.crossed_above(dataframe['senkou_b'], dataframe['senkou_a'])) &

@@ -43,9 +43,9 @@ class Schism5(IStrategy):
     custom_stop_ramp_minutes = 110
     custom_stop_trailing = 0.001
 
-    use_sell_signal = True
-    sell_profit_only = True
-    ignore_roi_if_buy_signal = True
+    use_exit_signal = True
+    exit_profit_only = True
+    ignore_roi_if_entry_signal = True
 
     startup_candle_count: int = 72
 
@@ -90,7 +90,7 @@ class Schism5(IStrategy):
     """
     Buy Trigger Signals
     """
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.get_pair_params(metadata['pair'], 'buy')
         trade_data = self.custom_trade_info[metadata['pair']]
         conditions = []
@@ -122,7 +122,7 @@ class Schism5(IStrategy):
     """
     Sell Trigger Signals
     """
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         params = self.get_pair_params(metadata['pair'], 'sell')
         conditions = []
 
@@ -283,7 +283,7 @@ class Schism5_BTC(Schism5):
         "4320": 0
     }
 
-    use_sell_signal = False
+    use_exit_signal = False
 
 class Schism5_ETH(Schism5):
 
@@ -307,4 +307,4 @@ class Schism5_ETH(Schism5):
         "4320": 0
     }
 
-    use_sell_signal = False
+    use_exit_signal = False

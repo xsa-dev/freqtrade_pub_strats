@@ -94,7 +94,7 @@ class Dimond(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe['buy_ema_fast'] = ta.SMA(
             dataframe, timeperiod=int(self.buy_fast.value))
         dataframe['buy_ema_slow'] = ta.SMA(
@@ -117,7 +117,7 @@ class Dimond(IStrategy):
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         push = self.buy_push.value
         shift = self.buy_shift.value
         ema_fast = dataframe['buy_ema_fast']
